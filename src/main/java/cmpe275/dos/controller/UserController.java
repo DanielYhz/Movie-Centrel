@@ -32,6 +32,7 @@ public class UserController extends AbstractController {
     UserService userService;
 
     @ApiOperation(value = "Get All Users [Topic: users]", response = Page.class)
+    
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
                     value = "Results page you want to retrieve (0..N)"),
