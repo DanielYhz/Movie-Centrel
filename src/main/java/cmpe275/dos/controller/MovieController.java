@@ -17,7 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static cmpe275.dos.constant.JsonConstant.KEY_MOVIE;
+import static cmpe275.dos.constant.JsonConstant.KEY_USER;
 import static cmpe275.dos.constant.UrlConstant.*;
 
 @RestController
@@ -87,5 +90,29 @@ public class MovieController extends AbstractController {
             return success(KEY_MOVIE, movieSimpleDto);
         else
             return notFound();
+    }
+
+    @ApiOperation(value = "Search movie by pattern[Topic: movies]", response = JsonResponse.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", dataType = "integer", paramType = "query",
+                    value = "Results page you want to retrieve (0..N)"),
+            @ApiImplicitParam(name = "size", dataType = "integer", paramType = "query",
+                    value = "Number of records per page."),
+            @ApiImplicitParam(name = "sort", allowMultiple = true, dataType = "string", paramType = "query",
+                    value = "Sorting criteria in the format: property(,asc|desc). " +
+                            "Default sort order is ascending. " +
+                            "Multiple sort criteria are supported.")
+    })
+    @GetMapping(SEARCH_MOVIES)
+    public Page<MovieSimpleDto> getMovies(@PathVariable String pattern, Pageable pageable) {
+        return movieService.searchMoviesByPattern(pattern, pageable);
+    }
+
+    @ApiOperation(value = "Delete Movie [Topic: users]", response = JsonResponse.class)
+    @DeleteMapping(MOVIE_ID)
+    public ResponseEntity<JsonResponse> DeleteMovie(@PathVariable Integer movieId){
+        if (movieService.deleteMovie(movieId))
+            return success(KEY_MOVIE, "deleted");
+        return notFound();
     }
 }
